@@ -1,7 +1,20 @@
 {
   "expo": {
-    "name": "tp-app",
-    "slug": "tp-app",
+    "name": "Tennis Player",
+    "slug": "tennis-player",
+    "icon":"./src/assets/logo.png",
+    "notification":{
+      "icon":"./src/assets/logo.png"
+    },
+    "ios": {
+      "bundleIdentifier": "com.alessandro.tennisplayer",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.alessandro.tennisplayer",
+      "versionCode": 1,
+      "softwareKeyboardLayoutMode": "pan"
+    },
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
