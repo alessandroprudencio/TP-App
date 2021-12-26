@@ -1,21 +1,116 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { TextInput, useTheme } from 'react-native-paper';
+import axios from 'axios';
+import React, { createRef, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TextInputMask } from 'react-native-masked-text';
+import { Caption, Dialog, Paragraph, Portal, RadioButton, TextInput, useTheme } from 'react-native-paper';
+import { ICategory } from '../interfaces/category.interface';
 import { AuthStackParamList } from '../routes';
+import api from '../services/api';
+
+interface IError {
+  email?: boolean;
+  password?: boolean;
+  phoneNumber?: boolean;
+  name?: boolean;
+  category?: boolean;
+}
+interface IRegister {
+  email: string;
+  password: string;
+  phoneNumber: string;
+  name: string;
+  category: string;
+}
 
 export default function SignInScreen() {
-  const [visible, setVisible] = useState<boolean>(false);
-  const [challenges, setChallenges] = useState<Array<any>>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
+  const [register, setRegister] = useState<IRegister>({} as IRegister);
+  const [isError, setIsError] = useState<IError>({} as IError);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+
+  const { navigate } = useNavigation<NavigationProp<AuthStackParamList>>();
 
   const { colors, roundness } = useTheme();
 
-  const signIn = () => {
-    console.log('email', email);
-    console.log('password', password);
+  const [showDropDown, setShowDropDown] = useState(false);
+
+  const registerRef = createRef<TextInputMask>();
+
+  useEffect(() => {
+    getCategories();
+
+    return () => setCategories([]);
+  }, []);
+
+  const signUp = async () => {
+    try {
+      const { email, password, phoneNumber, name, category } = register;
+
+      if (!email) setIsError((oldValue) => ({ ...oldValue, email: true }));
+      if (!password) setIsError((oldValue) => ({ ...oldValue, password: true }));
+      if (!phoneNumber) setIsError((oldValue) => ({ ...oldValue, phoneNumber: true }));
+      if (!name) setIsError((oldValue) => ({ ...oldValue, name: true }));
+      if (!category) setIsError((oldValue) => ({ ...oldValue, category: true }));
+
+      if (!email || !password || !phoneNumber || !name || !category) return;
+
+      setLoading(true);
+
+      console.log(register);
+
+      const formattedPhoneNumber = phoneNumber.replace(/[^\d+]/g, '');
+
+      await api.post('/auth/register', { ...register, phoneNumber: formattedPhoneNumber });
+
+      Alert.alert(
+        'Sucesso!',
+        'Foi enviado um link no seu email para confirmação, acesse e volte aqui para fazer login',
+        [
+          {
+            text: 'Fazer login',
+            onPress: async () => {
+              navigate('SignIn');
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const messages: any = error.response.data.error.message;
+
+        let stringError = '';
+
+        if (messages instanceof Array) messages.map((m: String) => (stringError += m + ' '));
+        else stringError = messages;
+
+        Alert.alert('Erro ao efetuar cadastro', stringError);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangeText = (value: any, fieldName: string) => {
+    setRegister((oldValue: IRegister) => ({ ...oldValue, [fieldName]: value }));
+
+    if (value === '') return setIsError((oldValue) => ({ ...oldValue, [fieldName]: true }));
+
+    setIsError((oldValue) => ({ ...oldValue, [fieldName]: false }));
+  };
+
+  const getCategories = async () => {
+    try {
+      const categories: ICategory[] = await (await api.get('/categories')).data;
+
+      setCategories(categories);
+    } catch (error) {
+      if (error instanceof Error) Alert.alert('Erro ao listar categorias', error.message);
+    }
+  };
+
+  const getCategoryName = (categoryId: string) => {
+    return categories.find((item) => item._id === categoryId)?.name;
   };
 
   return (
@@ -28,8 +123,9 @@ export default function SignInScreen() {
         <TextInput
           outlineColor={colors.grey}
           label="Nome"
-          returnKeyType="previous"
-          onChangeText={(email) => setEmail(email)}
+          value={register.name}
+          error={isError.name}
+          onChangeText={(value) => handleChangeText(value, 'name')}
           mode="outlined"
           style={styles.input}
         />
@@ -39,8 +135,11 @@ export default function SignInScreen() {
         <TextInput
           outlineColor={colors.grey}
           label="Email"
-          returnKeyType="previous"
-          onChangeText={(password) => setPassword(password)}
+          value={register.email}
+          autoCapitalize={'none'}
+          error={isError.email}
+          keyboardType="email-address"
+          onChangeText={(text) => handleChangeText(text, 'email')}
           mode="outlined"
           style={styles.input}
         />
@@ -50,10 +149,29 @@ export default function SignInScreen() {
         <TextInput
           outlineColor={colors.grey}
           label="Celular"
-          returnKeyType="previous"
-          onChangeText={(password) => setPassword(password)}
+          error={isError.phoneNumber}
+          value={register.phoneNumber}
           mode="outlined"
+          keyboardType="numeric"
           style={styles.input}
+          render={(props) => (
+            <TextInputMask
+              {...props}
+              value={register.phoneNumber}
+              type={'custom'}
+              options={{
+                mask: '+99 (99) 99999-9999',
+                validator: function (value, settings) {
+                  return true;
+                },
+              }}
+              onChangeText={(value) => {
+                props.onChangeText?.(value);
+                handleChangeText(value, 'phoneNumber');
+              }}
+              ref={registerRef}
+            />
+          )}
         />
       </View>
 
@@ -61,10 +179,10 @@ export default function SignInScreen() {
         <TextInput
           outlineColor={colors.grey}
           label="Senha"
+          value={register.password}
+          error={isError.password}
           secureTextEntry={true}
-          keyboardType={'visible-password'}
-          returnKeyType="previous"
-          onChangeText={(password) => setPassword(password)}
+          onChangeText={(text) => handleChangeText(text, 'password')}
           mode="outlined"
           style={styles.input}
         />
@@ -72,28 +190,74 @@ export default function SignInScreen() {
 
       <View style={styles.inputView}>
         <TextInput
+          onFocus={() => {
+            Keyboard.dismiss();
+            setShowDropDown(true);
+          }}
           outlineColor={colors.grey}
           label="Categoria"
-          returnKeyType="previous"
-          onChangeText={(password) => setPassword(password)}
+          value={register.category ? getCategoryName(register.category) : ''}
+          error={isError.category}
+          // onChangeText={(value) => handleChangeText(value, 'category')}
           mode="outlined"
           style={styles.input}
         />
+
+        <Portal>
+          <Dialog visible={showDropDown} onDismiss={() => setShowDropDown(false)}>
+            <Dialog.Title>Selecione a categoria:</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph>
+                <RadioButton.Group
+                  onValueChange={(value) => {
+                    setRegister((oldValue) => ({ ...oldValue, category: value }));
+                    setShowDropDown(false);
+                  }}
+                  value={register.category}
+                >
+                  {categories.length ? (
+                    categories.map((category) => (
+                      <View style={{ alignItems: 'flex-start' }} key={category._id}>
+                        <RadioButton.Item
+                          // labelStyle={{ backgroundColor: '#ccc' }}
+                          style={{
+                            paddingLeft: 0,
+                          }}
+                          position="leading"
+                          mode="android"
+                          label={category.name}
+                          value={category._id}
+                        />
+                        <Caption>{category.description}</Caption>
+                      </View>
+                    ))
+                  ) : (
+                    <Text>Nenhuma categoria cadastrada.</Text>
+                  )}
+                </RadioButton.Group>
+              </Paragraph>
+            </Dialog.Content>
+          </Dialog>
+        </Portal>
       </View>
 
       <View style={{ alignItems: 'center' }}>
         <Text style={{ color: colors.grey2 }}>Ja tem uma conta ?</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate('SignIn')} style={styles.signUpText}>
+        <TouchableOpacity onPress={() => navigate('SignIn')} style={styles.signUpText}>
           <Text style={styles.signUpText}>Entrar</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
-        onPress={() => signIn}
+        onPress={() => signUp()}
         style={[styles.loginBtn, { backgroundColor: colors.primary, borderRadius: roundness }]}
       >
-        <Text style={styles.loginText}>CADASTRAR</Text>
+        {loading ? (
+          <ActivityIndicator color={'#fff'} animating={true} />
+        ) : (
+          <Text style={styles.loginText}>CADASTRAR</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -113,10 +277,7 @@ const styles = StyleSheet.create({
   },
 
   inputView: {
-    // backgroundColor: '#FFC0CB',
     width: '85%',
-    // height: 45,
-    // marginBottom: 20,
   },
 
   title: {

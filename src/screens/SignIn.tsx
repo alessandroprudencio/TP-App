@@ -14,33 +14,26 @@ interface IError {
   password?: boolean;
 }
 
+interface ILogin {
+  email: string;
+  password: string;
+}
+
 export default function SignInScreen() {
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [login, setLogin] = useState<ILogin>({} as ILogin);
   const [isError, setIsError] = useState<IError>({} as IError);
   const [loading, setLoading] = useState<boolean>(false);
+
   const { navigate } = useNavigation<AuthScreenNavigationProp>();
 
   const { setToken, setUser } = useAuth();
 
   const { colors, roundness } = useTheme();
 
-  useEffect(() => {
-    if (email === '') setIsError((oldValue) => ({ ...oldValue, email: true }));
-
-    if (password === '') setIsError((oldValue) => ({ ...oldValue, password: true }));
-
-    // return () => {
-    //   setPassword('');
-
-    //   setIsError({});
-
-    //   setLoading(false);
-    // };
-  }, [email, password]);
-
   const signIn = async () => {
     try {
+      const { email, password } = login;
+
       if (!email) setIsError((oldValue) => ({ ...oldValue, email: true }));
       if (!password) setIsError((oldValue) => ({ ...oldValue, password: true }));
 
@@ -48,7 +41,9 @@ export default function SignInScreen() {
 
       setLoading(true);
 
-      const resp: IAuth = await (await api.post('/auth/login', { email, password })).data;
+      console.log('stared login');
+
+      const resp: IAuth = await (await api.post('/auth/login', login)).data;
 
       const token = resp.jwtToken;
 
@@ -72,12 +67,28 @@ export default function SignInScreen() {
         if (messages instanceof Array) messages.map((m: String) => (stringError += m + ' '));
         else stringError = messages;
 
-        Alert.alert('Erro ao efetuar login', stringError);
+        return Alert.alert(error.name, stringError);
       }
+
+      if (error instanceof Error) Alert.alert(error.name, error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleChangeText = (value: string, fieldName: string) => {
+    setLogin((oldValue: ILogin) => ({ ...oldValue, [fieldName]: value }));
+
+    if (value === '') return setIsError((oldValue) => ({ ...oldValue, [fieldName]: true }));
+
+    setIsError((oldValue) => ({ ...oldValue, [fieldName]: false }));
+  };
+
+  useEffect(() => {
+    return () => {
+      setLogin({} as ILogin);
+    };
+  }, []);
 
   return (
     <ImageBackground style={styles.background} resizeMode="cover" source={require('../../src/assets/background.jpg')}>
@@ -90,18 +101,12 @@ export default function SignInScreen() {
           <TextInput
             outlineColor={colors.grey}
             label="Email"
-            value={email}
+            value={login.email}
             autoCapitalize={'none'}
             error={isError.email}
             keyboardType="email-address"
             returnKeyType="previous"
-            onChangeText={(text) => {
-              setEmail(text);
-
-              if (email === '') return setIsError((oldValue) => ({ ...oldValue, email: true }));
-
-              setIsError((oldValue) => ({ ...oldValue, email: false }));
-            }}
+            onChangeText={(value) => handleChangeText(value, 'email')}
             mode="outlined"
             style={styles.input}
           />
@@ -111,18 +116,12 @@ export default function SignInScreen() {
           <TextInput
             outlineColor={colors.grey}
             label="Senha"
-            value={password}
+            value={login.password}
             error={isError.password}
             secureTextEntry={true}
             returnKeyType="send"
             onSubmitEditing={() => signIn()}
-            onChangeText={(text) => {
-              setPassword(text);
-
-              if (password === '') return setIsError((oldValue) => ({ ...oldValue, password: true }));
-
-              setIsError((oldValue) => ({ ...oldValue, password: false }));
-            }}
+            onChangeText={(value) => handleChangeText(value, 'password')}
             mode="outlined"
             style={styles.input}
           />
@@ -177,10 +176,7 @@ const styles = StyleSheet.create({
   },
 
   inputView: {
-    // backgroundColor: '#FFC0CB',
     width: '85%',
-    // height: 45,
-    // marginBottom: 20,
   },
 
   input: {
