@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { createRef, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
-import { Caption, Dialog, Paragraph, Portal, RadioButton, TextInput, useTheme } from 'react-native-paper';
+import { Caption, Dialog, Paragraph, Portal, RadioButton, TextInput, Title, useTheme } from 'react-native-paper';
 import { ICategory } from '../interfaces/category.interface';
 import { AuthStackParamList } from '../routes';
 import api from '../services/api';
@@ -115,9 +115,9 @@ export default function SignInScreen() {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require('../../src/assets/logo-transparent.png')} />
+      <Image style={styles.image} source={require('../../src/assets/logo.png')} />
 
-      <Text style={styles.title}>Cadastrar</Text>
+      <Title>Cadastrar</Title>
 
       <View style={styles.inputView}>
         <TextInput
@@ -161,9 +161,6 @@ export default function SignInScreen() {
               type={'custom'}
               options={{
                 mask: '+99 (99) 99999-9999',
-                validator: function (value, settings) {
-                  return true;
-                },
               }}
               onChangeText={(value) => {
                 props.onChangeText?.(value);
@@ -278,12 +275,6 @@ const styles = StyleSheet.create({
 
   inputView: {
     width: '85%',
-  },
-
-  title: {
-    fontWeight: 'bold',
-    fontSize: 26,
-    marginBottom: 20,
   },
 
   input: {

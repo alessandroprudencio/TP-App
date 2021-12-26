@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, TextInput, useTheme } from 'react-native-paper';
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TextInput, Title, useTheme } from 'react-native-paper';
 import { useAuth } from '../context/AuthContext';
 import { IAuth } from '../interfaces/auth.interface';
 import { AuthScreenNavigationProp } from '../routes';
@@ -35,6 +35,7 @@ export default function SignInScreen() {
       const { email, password } = login;
 
       if (!email) setIsError((oldValue) => ({ ...oldValue, email: true }));
+
       if (!password) setIsError((oldValue) => ({ ...oldValue, password: true }));
 
       if (!email || !password) return;
@@ -91,73 +92,66 @@ export default function SignInScreen() {
   }, []);
 
   return (
-    <ImageBackground style={styles.background} resizeMode="cover" source={require('../../src/assets/background.jpg')}>
-      <View style={styles.container}>
-        <Image style={styles.image} source={require('../../src/assets/logo-transparent.png')} />
+    <View style={styles.container}>
+      <Image style={styles.image} source={require('../../src/assets/logo.png')} />
 
-        <Text style={styles.title}>Entrar</Text>
+      <Title>Entrar</Title>
 
-        <View style={styles.inputView}>
-          <TextInput
-            outlineColor={colors.grey}
-            label="Email"
-            value={login.email}
-            autoCapitalize={'none'}
-            error={isError.email}
-            keyboardType="email-address"
-            returnKeyType="previous"
-            onChangeText={(value) => handleChangeText(value, 'email')}
-            mode="outlined"
-            style={styles.input}
-          />
-        </View>
+      <View style={styles.inputView}>
+        <TextInput
+          outlineColor={colors.grey}
+          label="Email"
+          value={login.email}
+          autoCapitalize={'none'}
+          error={isError.email}
+          keyboardType="email-address"
+          onChangeText={(value) => handleChangeText(value, 'email')}
+          mode="outlined"
+          style={styles.input}
+        />
+      </View>
 
-        <View style={styles.inputView}>
-          <TextInput
-            outlineColor={colors.grey}
-            label="Senha"
-            value={login.password}
-            error={isError.password}
-            secureTextEntry={true}
-            returnKeyType="send"
-            onSubmitEditing={() => signIn()}
-            onChangeText={(value) => handleChangeText(value, 'password')}
-            mode="outlined"
-            style={styles.input}
-          />
-        </View>
+      <View style={styles.inputView}>
+        <TextInput
+          outlineColor={colors.grey}
+          label="Senha"
+          value={login.password}
+          error={isError.password}
+          secureTextEntry={true}
+          returnKeyType="send"
+          onSubmitEditing={() => signIn()}
+          onChangeText={(value) => handleChangeText(value, 'password')}
+          mode="outlined"
+          style={styles.input}
+        />
+      </View>
 
-        <TouchableOpacity>
-          <Text style={styles.forgotButton}>Esqueceu a senha?</Text>
-        </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.forgotButton}>Esqueceu a senha?</Text>
+      </TouchableOpacity>
 
-        <View style={{ alignItems: 'center' }}>
-          <Text style={{ color: colors.grey2 }}>Não tem uma conta ?</Text>
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{ color: colors.grey2 }}>Não tem uma conta ?</Text>
 
-          <TouchableOpacity onPress={() => navigate('SignUp')} style={styles.signUpText}>
-            <Text style={styles.signUpText}>Cadastrar-se</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          disabled={isError.email || isError.password}
-          onPress={() => signIn()}
-          style={[styles.loginBtn, { backgroundColor: colors.primary, borderRadius: roundness }]}
-        >
-          {loading ? (
-            <ActivityIndicator color={'#fff'} animating={true} />
-          ) : (
-            <Text style={styles.loginText}>ENTRAR</Text>
-          )}
+        <TouchableOpacity onPress={() => navigate('SignUp')} style={styles.signUpText}>
+          <Text style={styles.signUpText}>Cadastrar-se</Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+
+      <TouchableOpacity
+        disabled={isError.email || isError.password}
+        onPress={() => signIn()}
+        style={[styles.loginBtn, { backgroundColor: colors.primary, borderRadius: roundness }]}
+      >
+        {loading ? <ActivityIndicator color={'#fff'} animating={true} /> : <Text style={styles.loginText}>ENTRAR</Text>}
+      </TouchableOpacity>
+    </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(52, 52, 52, 0.5)',
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -187,13 +181,6 @@ const styles = StyleSheet.create({
     height: 50,
   },
 
-  title: {
-    fontWeight: 'bold',
-    fontSize: 26,
-    marginBottom: 20,
-    color: 'white',
-  },
-
   loginText: {
     color: '#fff',
     fontWeight: 'bold',
@@ -209,7 +196,7 @@ const styles = StyleSheet.create({
 
   forgotButton: {
     height: 30,
-    color: 'white',
+    color: 'black',
     fontWeight: '500',
     marginBottom: 30,
   },
@@ -218,7 +205,7 @@ const styles = StyleSheet.create({
     height: 30,
     fontWeight: '500',
     marginBottom: 30,
-    color: 'white',
+    color: 'black',
   },
 
   loginBtn: {
