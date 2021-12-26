@@ -109,8 +109,6 @@ export default function Notification(props: { children: any }) {
 
       return token;
     } catch (error) {
-      console.log(error);
-
       if (error instanceof Error) Alert.alert(error.message);
     }
   }

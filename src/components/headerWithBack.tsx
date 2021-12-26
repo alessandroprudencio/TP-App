@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'center',
     flexDirection: 'row',
+    marginBottom: 20,
   },
   title: {
     textAlign: 'center',

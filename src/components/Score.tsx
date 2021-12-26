@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function ScoreComponent() {
   return (
@@ -16,6 +16,6 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 18,
-    fontWeight: "400",
+    fontWeight: '400',
   },
 });

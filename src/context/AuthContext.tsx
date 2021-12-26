@@ -34,8 +34,6 @@ export function AuthProvider({ children }: any) {
 
     const existUser = await AsyncStorage.getItem('@user');
 
-    console.log('entrou no gett token');
-
     if (existToken && existUser) {
       api.defaults.headers.common['Authorization'] = `Bearer ${existToken}`;
 

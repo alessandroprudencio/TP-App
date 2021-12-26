@@ -18,7 +18,6 @@ export default function CardDetailsPlayerComponent({ name, positionRanking, scor
           style={{
             flex: 0.7,
             alignItems: 'center',
-            // justifyContent: 'center',
           }}
         >
           <Text style={styles.infoText}>Número {positionRanking || '0'} no ranking</Text>

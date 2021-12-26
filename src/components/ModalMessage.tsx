@@ -20,7 +20,6 @@ export default function ModalMessageComponent({ showMessage, setShowMessage, mes
         transparent={true}
         visible={showMessage}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setShowMessage(!showMessage);
         }}
       >

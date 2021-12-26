@@ -46,7 +46,6 @@ export default function HomeScreen() {
 
       setUser({ ...user, positionRanking, score });
     } catch (error) {
-      console.log(error);
       if (error instanceof Error) {
         Alert.alert('Erro', error.message);
       }

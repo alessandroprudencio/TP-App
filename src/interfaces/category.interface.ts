@@ -4,6 +4,5 @@ export interface ICategory {
   readonly _id: string;
   name: string;
   description: string;
-  events: Array<Event>;
-  players: Array<IPlayer>;
+  players?: Array<IPlayer>;
 }
