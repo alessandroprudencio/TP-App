@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '../components/Loading';
 import Notification from '../components/Notification';
 import { useAuth } from '../context/AuthContext';
+import { ChallengeProvider } from '../context/ChallengeContext';
 import CategoryScreen from '../screens/Category';
 import HomeScreen from '../screens/Home';
 import SignInScreen from '../screens/SignIn';
@@ -36,14 +37,16 @@ const Routes = () => {
   return (
     <NavigationContainer>
       {isLogged ? (
-        <Notification>
-          <SafeAreaView style={{ flex: 1, marginHorizontal: 15 }}>
-            <RootStack.Navigator screenOptions={{ headerShown: false }}>
-              <RootStack.Screen name="Home" component={HomeScreen} />
-              <RootStack.Screen name="Category" component={CategoryScreen} />
-            </RootStack.Navigator>
-          </SafeAreaView>
-        </Notification>
+        <ChallengeProvider>
+          <Notification>
+            <SafeAreaView style={{ flex: 1, marginHorizontal: 15 }}>
+              <RootStack.Navigator screenOptions={{ headerShown: false }}>
+                <RootStack.Screen name="Home" component={HomeScreen} />
+                <RootStack.Screen name="Category" component={CategoryScreen} />
+              </RootStack.Navigator>
+            </SafeAreaView>
+          </Notification>
+        </ChallengeProvider>
       ) : (
         <AuthStack.Navigator screenOptions={{ headerShown: false }}>
           <AuthStack.Screen name="SignIn" component={SignInScreen} />

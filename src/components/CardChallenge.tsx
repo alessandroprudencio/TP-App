@@ -14,7 +14,7 @@ import ModalMessageComponent from './ModalMessage';
 export default function CardChallenge(challenge: IChallenge) {
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
-  const { setSelectedChallenge } = useChallenge();
+  // const { setSelectedChallenge } = useChallenge();
 
   const { user } = useAuth();
 
@@ -56,7 +56,7 @@ export default function CardChallenge(challenge: IChallenge) {
         {challenge.message && (
           <TouchableOpacity
             onPress={() => {
-              setSelectedChallenge(challenge);
+              // setSelectedChallenge(challenge);
               setShowMessage(true);
             }}
           >

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { Title, useTheme } from 'react-native-paper';
 import ButtonFloatComponent from '../components/ButtonFloat';
 import CardChallenge from '../components/CardChallenge';
 import HeaderUserComponent from '../components/HeaderUser';
 import { useAuth } from '../context/AuthContext';
+import { ChallengeProvider, useChallenge } from '../context/ChallengeContext';
 import { IChallenge } from '../interfaces/challenge.interface';
 import api from '../services/api';
 import ModalChallengeScreen from './ModalChallenge';
@@ -20,19 +21,25 @@ export default function HomeScreen() {
 
   const { user, setUser } = useAuth();
 
+  const { isRefreshChallenges } = useChallenge();
+
   useEffect(() => {
     if (user._id) {
-      loadChallenges();
-
-      getPositionRanking();
+      loadDataHome();
     }
   }, []);
 
-  const loadChallenges = async () => {
-    try {
-      const challenges: Array<IChallenge> = await (await api.get(`challenges/${user._id}/players`)).data;
+  useEffect(() => {
+    if (isRefreshChallenges) {
+      loadChallenges();
+    }
+  }, [isRefreshChallenges]);
 
-      setChallenges(challenges);
+  const loadDataHome = async () => {
+    try {
+      await loadChallenges();
+
+      await getPositionRanking();
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Erro', error.message);
@@ -40,16 +47,16 @@ export default function HomeScreen() {
     }
   };
 
-  const getPositionRanking = async () => {
-    try {
-      const { positionRanking, score } = await (await api.get(`players/${user._id}`)).data;
+  const loadChallenges = async () => {
+    const challenges: Array<IChallenge> = await (await api.get(`challenges/${user._id}/players`)).data;
 
-      setUser({ ...user, positionRanking, score });
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Erro', error.message);
-      }
-    }
+    setChallenges(challenges);
+  };
+
+  const getPositionRanking = async () => {
+    const { positionRanking, score } = await (await api.get(`players/${user._id}`)).data;
+
+    setUser({ ...user, positionRanking, score });
   };
 
   const handleHideModal = () => {
@@ -76,6 +83,7 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         initialNumToRender={1}
         data={challenges}
+        ListEmptyComponent={() => <Text style={{ textAlign: 'center' }}>Nenhum desafio ainda...</Text>}
         ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
