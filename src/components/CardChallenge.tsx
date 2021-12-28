@@ -5,13 +5,16 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../context/AuthContext';
+import { useChallenge } from '../context/ChallengeContext';
 import { IChallenge } from '../interfaces/challenge.interface';
 import ButtonAcceptDecline from './ButtonAcceptDecline';
 import ButtonFinallyChallenge from './ButtonFinnalyChallenge';
 import ModalMessageComponent from './ModalMessage';
 
-export default function CardChallenge({ _id, players, dateTimeChallenge, status, requester, message }: IChallenge) {
+export default function CardChallenge(challenge: IChallenge) {
   const [showMessage, setShowMessage] = useState<boolean>(false);
+
+  const { setSelectedChallenge } = useChallenge();
 
   const { user } = useAuth();
 
@@ -26,15 +29,15 @@ export default function CardChallenge({ _id, players, dateTimeChallenge, status,
   const formattedAvatar = (avatar: string) => (avatar ? { uri: avatar } : require('../assets/boy.png'));
 
   const renderCard = () => {
-    switch (status) {
+    switch (challenge.status) {
       case 'REALIZADO':
         break;
 
       case 'ACEITO':
-        return <ButtonFinallyChallenge />;
+        return <ButtonFinallyChallenge {...challenge} />;
 
       case 'PENDENTE':
-        if (requester !== user._id) return <ButtonAcceptDecline challengeId={_id} />;
+        if (challenge.requester !== user._id) return <ButtonAcceptDecline challengeId={challenge._id} />;
 
         return (
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
@@ -48,10 +51,15 @@ export default function CardChallenge({ _id, players, dateTimeChallenge, status,
   return (
     <View style={[styles.container]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text style={styles.date}>{moment(dateTimeChallenge).format('DD/MM/yyyy H:mm')}</Text>
+        <Text style={styles.date}>{moment(challenge.dateTimeChallenge).format('DD/MM/yyyy H:mm')}</Text>
 
-        {message && (
-          <TouchableOpacity onPress={() => setShowMessage(true)}>
+        {challenge.message && (
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedChallenge(challenge);
+              setShowMessage(true);
+            }}
+          >
             <Icon name="message" color="grey" size={20} onPress={() => console.log('Pressed')} />
           </TouchableOpacity>
         )}
@@ -59,21 +67,23 @@ export default function CardChallenge({ _id, players, dateTimeChallenge, status,
 
       <View style={styles.avatars}>
         <View style={{ flex: 0.32, alignItems: 'center' }}>
-          <Avatar.Image style={styles.avatar} size={60} source={formattedAvatar(players[0].avatar)} />
+          <Avatar.Image style={styles.avatar} size={60} source={formattedAvatar(challenge.players[0].avatar)} />
 
-          <Text style={styles.playerName}>{formattedName(players[0].name)}</Text>
+          <Text style={styles.playerName}>{formattedName(challenge.players[0].name)}</Text>
         </View>
 
         <View style={styles.centerItem}>{renderCard()}</View>
 
         <View style={{ flex: 0.32, alignItems: 'center' }}>
-          <Avatar.Image style={styles.avatar} size={60} source={formattedAvatar(players[1].avatar)} />
+          <Avatar.Image style={styles.avatar} size={60} source={formattedAvatar(challenge.players[1].avatar)} />
 
-          <Text style={styles.playerName}>{formattedName(players[1].name)}</Text>
+          <Text style={styles.playerName}>{formattedName(challenge.players[1].name)}</Text>
         </View>
       </View>
 
-      {message && <ModalMessageComponent message={message} showMessage={showMessage} setShowMessage={setShowMessage} />}
+      {challenge.message && (
+        <ModalMessageComponent message={challenge.message} showMessage={showMessage} setShowMessage={setShowMessage} />
+      )}
     </View>
   );
 }

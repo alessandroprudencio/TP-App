@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
-import { acceptChallenge } from '../services/acceptChallenge';
+import DialogAcceptChallenge from './DialogAcceptChallenge';
 
 export default function ButtonAcceptDecline({ challengeId }: { challengeId: string }) {
   const [fadeAnimation] = useState(new Animated.Value(0));
@@ -38,7 +38,7 @@ export default function ButtonAcceptDecline({ challengeId }: { challengeId: stri
             style={{
               backgroundColor: 'white',
             }}
-            onPress={() => acceptChallenge()}
+            onPress={() => DialogAcceptChallenge(challengeId)}
           />
         </Animated.View>
       </View>

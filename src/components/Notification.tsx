@@ -5,8 +5,9 @@ import { NotificationResponse } from 'expo-notifications';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Platform } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { acceptChallenge } from '../services/acceptChallenge';
+import { useChallenge } from '../context/ChallengeContext';
 import api from '../services/api';
+import DialogAcceptChallenge from './DialogAcceptChallenge';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,13 +24,15 @@ export default function Notification(props: { children: any }) {
   const responseListener = useRef<any>();
 
   const { user } = useAuth();
+  const { setIsRefreshChallenges } = useChallenge();
 
   useEffect(() => {
     getPushToken().then((pushToken) => {
       if (!pushToken) {
-        console.log('não tem token=>', pushToken);
+        console.log('não tem pushToken=>', pushToken);
 
         registerForPushNotificationsAsync().then(async (token) => {
+          console.log('pushToken=>', pushToken);
           if (token) {
             setExpoPushToken(token);
 
@@ -39,6 +42,7 @@ export default function Notification(props: { children: any }) {
           }
         });
       } else {
+        console.log('tem pushToken=>', pushToken);
         setExpoPushToken(pushToken);
       }
     });
@@ -48,13 +52,14 @@ export default function Notification(props: { children: any }) {
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response: NotificationResponse) => {
-        const { notification } = response;
+      async (response: NotificationResponse) => {
+        const { notification }: any = response;
 
-        acceptChallenge();
+        const isAccept = await DialogAcceptChallenge(notification.request.content.data.challengeId);
 
-        console.log(notification.request.content);
-        console.log(notification.request.content.body);
+        if (isAccept) {
+          setIsRefreshChallenges(true);
+        }
       },
     );
 
@@ -64,15 +69,15 @@ export default function Notification(props: { children: any }) {
     };
   }, []);
 
-  async function getPushToken() {
+  const getPushToken = async () => {
     const pushToken = await AsyncStorage.getItem('@pushToken');
 
     if (pushToken) return JSON.parse(pushToken);
 
     return null;
-  }
+  };
 
-  async function registerForPushNotificationsAsync() {
+  const registerForPushNotificationsAsync = async () => {
     try {
       let token;
 
@@ -111,7 +116,7 @@ export default function Notification(props: { children: any }) {
     } catch (error) {
       if (error instanceof Error) Alert.alert(error.message);
     }
-  }
+  };
 
   return <>{props.children}</>;
 }

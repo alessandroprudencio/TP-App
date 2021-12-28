@@ -6,8 +6,8 @@ import api from '../services/api';
 export const AuthContext = createContext({
   isLogged: false,
   user: {} as IPlayer,
-  setToken: (token: string) => {},
-  setUser: (user: IPlayer) => {},
+  setToken: (_token: string) => {},
+  setUser: (_user: IPlayer) => {},
   logout: () => {},
   isLoading: true,
 });
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: any) {
   };
 
   const logout = async () => {
-    await AsyncStorage.multiRemove(['@token', '@user']);
+    await AsyncStorage.multiRemove(['@token', '@user', '@pushToken']);
 
     setToken(null);
 

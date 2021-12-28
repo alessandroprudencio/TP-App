@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   playerName: {
+    fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 10,
   },
