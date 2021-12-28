@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState } from 'react';
-import { IChallenge } from '../interfaces/challenge.interface';
 
 export const ChallengeContext = createContext({
   // selectedChallenge: {},

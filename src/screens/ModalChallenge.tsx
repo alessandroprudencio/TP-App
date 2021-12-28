@@ -1,15 +1,15 @@
 import moment from 'moment';
 import React, { createRef, useEffect, useState } from 'react';
 import {
-    Alert,
-    Dimensions,
-    Modal,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  Modal,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { TextInputMask } from 'react-native-masked-text';

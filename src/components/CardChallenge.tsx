@@ -5,7 +5,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../context/AuthContext';
-import { useChallenge } from '../context/ChallengeContext';
 import { IChallenge } from '../interfaces/challenge.interface';
 import ButtonAcceptDecline from './ButtonAcceptDecline';
 import ButtonFinallyChallenge from './ButtonFinnalyChallenge';

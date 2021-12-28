@@ -1,5 +1,5 @@
 <p align="center">
-  <a ><img src="https://github.com/alessandroprudencio/TP-App/blob/develop/src/assets/logo.png" width="200" alt="Logo" /></a>
+  <a ><img src="https://github.com/alessandroprudencio/TP-App/blob/main/src/assets/logo.png" width="200" alt="Logo" /></a>
 </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
@@ -13,9 +13,7 @@ Mobile app that connects amateur tennis players
 
 ## Wireframe
 
-<a href="https://www.figma.com/file/s0AXMvT1Jvu37PofcwUHhs/Projects?node-id=51%3A8">
-
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2Fs0AXMvT1Jvu37PofcwUHhs%2FProjects%3Fnode-id%3D51%253A8" allowfullscreen></iframe>
+<a targe="_blank" href="https://www.figma.com/file/s0AXMvT1Jvu37PofcwUHhs?embed_host=share&kind=&node-id=51%3A8&viewer=1">Acess o Figma</a>
 
 ## Installation
 
