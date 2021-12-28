@@ -47,7 +47,7 @@ export default function HeaderUserComponent() {
 
           <Text style={styles.score}>{user.score || '0'} pontos</Text>
 
-          <Text style={styles.vd}>10-2 (V-D)</Text>
+          {/* <Text style={styles.vd}>10-2 (V-D)</Text> */}
         </View>
       </View>
 

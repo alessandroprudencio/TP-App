@@ -34,7 +34,7 @@ export default function CategoryScreen() {
 
   return (
     <View style={styles.container}>
-      <HeaderWithBackComponent style={{ marginBottom: 10 }} title={categoryName} handleBack={() => navigate('Home')} />
+      <HeaderWithBackComponent title={categoryName} handleBack={() => navigate('Home')} />
 
       <Text style={{ color: colors.smallText, fontSize: 14, marginBottom: 15 }}>Jogadores ({players?.length})</Text>
 
