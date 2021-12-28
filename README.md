@@ -35,6 +35,7 @@ $ expo start
 
 - [React Native](https://nestjs.com/)
 - [Expo](https://expo.dev/)
+- [Figma](https://www.figma.com/)
 
 ## Stay in touch
 
