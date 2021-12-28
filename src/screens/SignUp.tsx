@@ -1,9 +1,20 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { createRef, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Keyboard,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { TextInputMask } from 'react-native-masked-text';
-import { Caption, Dialog, Paragraph, Portal, RadioButton, TextInput, Title, useTheme } from 'react-native-paper';
+import { Caption, Dialog, Portal, RadioButton, TextInput, Title, useTheme } from 'react-native-paper';
 import { ICategory } from '../interfaces/category.interface';
 import { AuthStackParamList } from '../routes';
 import api from '../services/api';
@@ -119,92 +130,97 @@ export default function SignInScreen() {
 
       <Title>Cadastrar</Title>
 
-      <View style={styles.inputView}>
-        <TextInput
-          outlineColor={colors.grey}
-          label="Nome"
-          value={register.name}
-          error={isError.name}
-          onChangeText={(value) => handleChangeText(value, 'name')}
-          mode="outlined"
-          style={styles.input}
-        />
-      </View>
+      <ScrollView
+        style={{ width: '100%', maxHeight: Platform.OS === 'android' ? 420 : '36%' }}
+        contentContainerStyle={{ alignItems: 'center' }}
+      >
+        <View style={styles.inputView}>
+          <TextInput
+            outlineColor={colors.grey}
+            label="Nome"
+            value={register.name}
+            error={isError.name}
+            onChangeText={(value) => handleChangeText(value, 'name')}
+            mode="outlined"
+            style={styles.input}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          outlineColor={colors.grey}
-          label="Email"
-          value={register.email}
-          autoCapitalize={'none'}
-          error={isError.email}
-          keyboardType="email-address"
-          onChangeText={(text) => handleChangeText(text, 'email')}
-          mode="outlined"
-          style={styles.input}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <TextInput
+            outlineColor={colors.grey}
+            label="Email"
+            value={register.email}
+            autoCapitalize={'none'}
+            error={isError.email}
+            keyboardType="email-address"
+            onChangeText={(text) => handleChangeText(text, 'email')}
+            mode="outlined"
+            style={styles.input}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          outlineColor={colors.grey}
-          label="Celular"
-          error={isError.phoneNumber}
-          value={register.phoneNumber}
-          mode="outlined"
-          keyboardType="numeric"
-          style={styles.input}
-          render={(props) => (
-            <TextInputMask
-              {...props}
-              value={register.phoneNumber}
-              type={'custom'}
-              options={{
-                mask: '+99 (99) 99999-9999',
-              }}
-              onChangeText={(value) => {
-                props.onChangeText?.(value);
-                handleChangeText(value, 'phoneNumber');
-              }}
-              ref={registerRef}
-            />
-          )}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <TextInput
+            outlineColor={colors.grey}
+            label="Celular"
+            error={isError.phoneNumber}
+            value={register.phoneNumber}
+            mode="outlined"
+            keyboardType="numeric"
+            style={styles.input}
+            render={(props) => (
+              <TextInputMask
+                {...props}
+                value={register.phoneNumber}
+                type={'custom'}
+                options={{
+                  mask: '+99 (99) 99999-9999',
+                }}
+                onChangeText={(value) => {
+                  props.onChangeText?.(value);
+                  handleChangeText(value, 'phoneNumber');
+                }}
+                ref={registerRef}
+              />
+            )}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          outlineColor={colors.grey}
-          label="Senha"
-          value={register.password}
-          error={isError.password}
-          secureTextEntry={true}
-          onChangeText={(text) => handleChangeText(text, 'password')}
-          mode="outlined"
-          style={styles.input}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <TextInput
+            outlineColor={colors.grey}
+            label="Senha"
+            value={register.password}
+            error={isError.password}
+            secureTextEntry={true}
+            onChangeText={(text) => handleChangeText(text, 'password')}
+            mode="outlined"
+            style={styles.input}
+          />
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          onFocus={() => {
-            Keyboard.dismiss();
-            setShowDropDown(true);
-          }}
-          outlineColor={colors.grey}
-          label="Categoria"
-          value={register.category ? getCategoryName(register.category) : ''}
-          error={isError.category}
-          // onChangeText={(value) => handleChangeText(value, 'category')}
-          mode="outlined"
-          style={styles.input}
-        />
+        {/* Dropdown */}
+        <View style={styles.inputView}>
+          <TextInput
+            onFocus={() => {
+              Keyboard.dismiss();
+              setShowDropDown(true);
+            }}
+            outlineColor={colors.grey}
+            label="Categoria"
+            value={register.category ? getCategoryName(register.category) : ''}
+            error={isError.category}
+            // onChangeText={(value) => handleChangeText(value, 'category')}
+            mode="outlined"
+            style={styles.input}
+          />
 
-        <Portal>
-          <Dialog visible={showDropDown} onDismiss={() => setShowDropDown(false)}>
-            <Dialog.Title>Selecione a categoria:</Dialog.Title>
-            <Dialog.Content>
-              <Paragraph>
+          <Portal>
+            <Dialog visible={showDropDown} onDismiss={() => setShowDropDown(false)}>
+              <Dialog.Title>Selecione a categoria:</Dialog.Title>
+
+              <Dialog.Content>
                 <RadioButton.Group
                   onValueChange={(value) => {
                     setRegister((oldValue) => ({ ...oldValue, category: value }));
@@ -232,13 +248,13 @@ export default function SignInScreen() {
                     <Text>Nenhuma categoria cadastrada.</Text>
                   )}
                 </RadioButton.Group>
-              </Paragraph>
-            </Dialog.Content>
-          </Dialog>
-        </Portal>
-      </View>
+              </Dialog.Content>
+            </Dialog>
+          </Portal>
+        </View>
+      </ScrollView>
 
-      <View style={{ alignItems: 'center' }}>
+      <View style={{ alignItems: 'center', marginTop: 0, paddingTop: 0 }}>
         <Text style={{ color: colors.grey2 }}>Ja tem uma conta ?</Text>
 
         <TouchableOpacity onPress={() => navigate('SignIn')} style={styles.signUpText}>
@@ -280,7 +296,7 @@ const styles = StyleSheet.create({
   input: {
     borderRadius: 30,
     borderColor: '#ccc',
-    marginBottom: 20,
+    marginBottom: 10,
     backgroundColor: '#fff',
     height: 50,
   },
@@ -298,16 +314,10 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 
-  forgotButton: {
-    height: 30,
-    fontWeight: '500',
-    marginBottom: 30,
-  },
-
   signUpText: {
     height: 30,
     fontWeight: '500',
-    marginBottom: 30,
+    // marginBottom: 30,
   },
 
   loginBtn: {
@@ -316,6 +326,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 30,
-    marginBottom: 10,
+    position: Platform.OS === 'ios' ? 'absolute' : 'relative',
+    bottom: Platform.OS === 'ios' ? 20 : 10,
   },
 });

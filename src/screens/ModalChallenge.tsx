@@ -1,14 +1,19 @@
 import moment from 'moment';
 import React, { createRef, useEffect, useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  Modal, Platform, SafeAreaView, StyleSheet,
-  Text, TouchableOpacity, View
+    Alert,
+    Dimensions,
+    Modal,
+    Platform,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { TextInputMask } from 'react-native-masked-text';
-import { Avatar, TextInput as TextInputPaper, useTheme } from 'react-native-paper';
+import { Avatar, Caption, TextInput as TextInputPaper, useTheme } from 'react-native-paper';
 import ButtonChallenge from '../components/ButtonChallenge';
 import HeaderWithBack from '../components/headerWithBack';
 import { useAuth } from '../context/AuthContext';
@@ -164,7 +169,7 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
               <View style={styles.section}>
                 <Text style={styles.label}>Selecione o adversário:</Text>
 
-                {opponents.length > 0 && (
+                {opponents.length > 0 ? (
                   <FlatList
                     horizontal={true}
                     data={opponents}
@@ -202,6 +207,8 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                       </View>
                     )}
                   />
+                ) : (
+                  <Caption>Nenhum adversario encontrado.</Caption>
                 )}
               </View>
 
@@ -224,7 +231,7 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
               </View>
             </View>
 
-            <View>
+            <View style={{ bottom: 0, position: 'absolute', alignSelf: 'center' }}>
               <ButtonChallenge loading={loading} submit={() => submit()} />
             </View>
           </ScrollView>
@@ -240,7 +247,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     flexGrow: 1,
-    justifyContent: 'space-evenly',
+    // justifyContent: 'space-evenly',
     marginHorizontal: 15,
   },
   textAreaContainer: {
