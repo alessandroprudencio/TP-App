@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, RefreshControl, Text, View } from 'react-native';
+import { Alert, FlatList, RefreshControl, View } from 'react-native';
 import { Caption } from 'react-native-paper';
 import { useAuth } from '../context/AuthContext';
 import { IChallenge } from '../interfaces/challenge.interface';
