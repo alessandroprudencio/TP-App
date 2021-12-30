@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, Modal, Portal, RadioButton, Text, TextInput, Title } from 'react-native-paper';
@@ -45,6 +45,20 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
 
   const [winPlayer, setWinPlayer] = useState<any>({} as IPlayer);
 
+  useEffect(() => {
+    if (!isVisible) {
+      initialState();
+    }
+  }, [isVisible]);
+
+  const initialState = () => {
+    setShowDropDown(false);
+    setInputValues([]);
+    setNumInputs(3);
+    setNumInputs(3);
+    setWinPlayer({});
+  };
+
   const handleEndMatch = async () => {
     try {
       if (!winPlayer._id) setHasError((oldValue) => ({ ...oldValue, winPlayer: true }));
@@ -63,15 +77,12 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
 
       const body = { winPlayer: winPlayer._id, result };
 
-      console.log(body);
-
       await api.post(`challenges/${challengeId}/set-result`, body);
 
       setIsVisible(false);
 
       setIsRefreshChallenges(true);
     } catch (error) {
-      console.log(error);
       if (error instanceof Error) Alert.alert('Erro ao finalizar partida', error.message);
     }
   };
@@ -157,7 +168,7 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
   }, []);
 
   const removeSet = (i: number) => {
-    // setNumInputs((value) => value - 1);
+    setNumInputs((value) => value - 1);
   };
 
   const inputs: JSX.Element[] = [];
@@ -170,7 +181,7 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
         <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
           <View style={{ width: 140 }}>
             <TextInput
-              style={{ height: 40 }}
+              style={styles.input}
               keyboardType="numeric"
               onChangeText={(value) => handleValue(i, value, undefined)}
               label="Valor 1"
@@ -181,7 +192,7 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
 
           <View style={{ width: 140 }}>
             <TextInput
-              style={{ height: 40 }}
+              style={styles.input}
               onChangeText={(value) => handleValue(i, undefined, value)}
               keyboardType="numeric"
               label="Valor 2"
@@ -205,16 +216,24 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
         dismissable={false}
         contentContainerStyle={[styles.containerStyle, { borderRadius: 5 }]}
       >
-        <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
+        <View
+          style={{
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 0,
+            paddingTop: 0,
+          }}
+        >
           <Title>Insira o resultado da partida</Title>
 
           <IconButton icon="close" size={30} onPress={() => setIsVisible(false)} />
         </View>
 
         {/* Dropdown */}
-        <View>
+        <View style={{ marginBottom: 10 }}>
           <TextInput
-            style={{ height: 40 }}
+            style={styles.input}
             onFocus={() => {
               Keyboard.dismiss();
               setShowDropDown(true);
@@ -259,16 +278,20 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
           </Portal>
         </View>
 
+        {/* Inputs */}
         <ScrollView keyboardShouldPersistTaps="always" keyboardDismissMode="on-drag" style={{ flex: 1 }}>
-          {/* Inputs */}
           {inputs}
         </ScrollView>
 
-        <Button style={{ marginBottom: 20 }} icon="plus" mode="text" onPress={addSet}>
+        <Button style={{ marginBottom: 10, marginTop: 10 }} icon="plus" mode="text" onPress={addSet}>
           Add Set
         </Button>
 
-        <Button style={{ height: 40, justifyContent: 'center' }} mode="contained" onPress={() => handleEndMatch()}>
+        <Button
+          style={{ marginBottom: 20, height: 40, justifyContent: 'center' }}
+          mode="contained"
+          onPress={() => handleEndMatch()}
+        >
           Finalizar Partida
         </Button>
       </Modal>
@@ -280,10 +303,17 @@ const styles = StyleSheet.create({
   container: {
     // padding: 10,
   },
+
   containerStyle: {
     backgroundColor: 'white',
-    padding: 20,
+    paddingTop: 0,
+    paddingHorizontal: 20,
     marginHorizontal: 20,
-    minHeight: 480,
+    minHeight: 500,
+  },
+
+  input: {
+    height: 40,
+    backgroundColor: 'white',
   },
 });
