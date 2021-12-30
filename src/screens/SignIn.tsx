@@ -42,8 +42,6 @@ export default function SignInScreen() {
 
       setLoading(true);
 
-      console.log('stared login');
-
       const resp: IAuth = await (await api.post('/auth/login', login)).data;
 
       const token = resp.jwtToken;

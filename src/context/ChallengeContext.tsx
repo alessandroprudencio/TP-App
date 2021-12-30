@@ -10,10 +10,6 @@ export const ChallengeContext = createContext({
 export const ChallengeProvider = ({ children }: any) => {
   const [isRefreshChallenges, setIsRefreshChallenges] = useState<boolean>(false);
 
-  // const selectedChallenge = (params: IChallenge) => {
-  //   console.log(params);
-  // };
-
   return (
     <ChallengeContext.Provider
       value={{

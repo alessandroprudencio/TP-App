@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { TextInputMask } from 'react-native-masked-text';
@@ -148,8 +148,6 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                     options={{
                       mask: '99/99/9999',
                       validator: function (value, settings) {
-                        console.log(value);
-                        console.log(settings);
                         return true;
                       },
                     }}

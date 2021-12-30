@@ -29,20 +29,14 @@ export default function Notification(props: { children: any }) {
   useEffect(() => {
     getPushToken().then((pushToken) => {
       if (!pushToken) {
-        console.log('não tem pushToken=>', pushToken);
-
         registerForPushNotificationsAsync().then(async (token) => {
-          console.log('pushToken=>', pushToken);
           if (token) {
             setExpoPushToken(token);
-
-            console.log('token from registerForPushNotificationsAsync=>', token);
 
             await AsyncStorage.setItem('@pushToken', JSON.stringify(token));
           }
         });
       } else {
-        console.log('tem pushToken=>', pushToken);
         setExpoPushToken(pushToken);
       }
     });
@@ -100,7 +94,6 @@ export default function Notification(props: { children: any }) {
 
         await api.put(`/players/${user._id}/set-push-token`, { pushToken: token });
       } else {
-        console.log('Must use physical device for Push Notifications');
       }
 
       if (Platform.OS === 'android') {

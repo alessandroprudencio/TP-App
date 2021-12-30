@@ -52,19 +52,13 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
         return obj.firstValue || obj.secondValue;
       });
 
-      console.log(hasError);
-
       if (Object.values(hasError).includes(true) || checkExistErrors.includes(true)) return;
-
-      console.log('apssou');
 
       const result = inputValue.map((set: { firstValue: string; secondValue: string }) => {
         return { set: set.firstValue + '-' + set.secondValue };
       });
 
       const body = { winPlayer: winPlayer._id, result };
-
-      console.log(body);
 
       await api.put(`challenges/${challengeId}/set-result`, body);
     } catch (error) {
@@ -73,10 +67,6 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
   };
 
   const handleValue = (indice: number, firstValue?: string, secondValue?: string) => {
-    console.log('entrou handle value');
-    console.log('indice=>', indice);
-    console.log('firstValue=>', firstValue);
-
     const object = {
       firstValue: firstValue === undefined ? inputValue[indice]?.firstValue : firstValue,
       secondValue: secondValue === undefined ? inputValue[indice]?.secondValue : secondValue,

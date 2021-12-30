@@ -12,7 +12,6 @@ export default function ListHistoryChallenges() {
   const { user } = useAuth();
 
   useEffect(() => {
-    console.log('montou screen history');
     loadHistory();
   }, []);
 
