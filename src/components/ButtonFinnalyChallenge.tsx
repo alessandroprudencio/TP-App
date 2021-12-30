@@ -6,7 +6,7 @@ import { IChallenge } from '../interfaces/challenge.interface';
 import ModalSetResult from './ModalSetResult';
 
 export default function ButtonFinallyChallenge({ dateTimeResponse, _id, players }: IChallenge) {
-  const formattedDate = moment(new Date(dateTimeResponse)).format('DD/MM/yyyy H:m');
+  const formattedDate = moment(new Date(dateTimeResponse)).format('DD/MM/yyyy H:mm');
 
   const [isVisible, setIsVisible] = useState(false);
 

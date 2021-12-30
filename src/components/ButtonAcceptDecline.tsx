@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
+import { useChallenge } from '../context/ChallengeContext';
 import DialogAcceptChallenge from './DialogAcceptChallenge';
 
 export default function ButtonAcceptDecline({ challengeId }: { challengeId: string }) {
   const [fadeAnimation] = useState(new Animated.Value(0));
 
+  const { setIsRefreshChallenges } = useChallenge();
+
   const [duration] = useState(500);
 
   const { colors } = useTheme();
+
+  const showDialog = async () => {
+    console.log('entrou show dialog');
+
+    const isAccept = await DialogAcceptChallenge(challengeId);
+
+    if (isAccept) {
+      setIsRefreshChallenges(true);
+    }
+  };
 
   useEffect(() => {
     Animated.loop(
@@ -38,7 +51,7 @@ export default function ButtonAcceptDecline({ challengeId }: { challengeId: stri
             style={{
               backgroundColor: 'white',
             }}
-            onPress={() => DialogAcceptChallenge(challengeId)}
+            onPress={() => showDialog()}
           />
         </Animated.View>
       </View>

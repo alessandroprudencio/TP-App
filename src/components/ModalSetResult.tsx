@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, Modal, Portal, RadioButton, Text, TextInput, Title } from 'react-native-paper';
+import { useChallenge } from '../context/ChallengeContext';
 import { IPlayer } from '../interfaces/player.interface';
 import api from '../services/api';
 
@@ -34,6 +35,8 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
     sets: [],
   });
 
+  const { setIsRefreshChallenges } = useChallenge();
+
   const [showDropDown, setShowDropDown] = useState(false);
 
   const [inputValue, setInputValues] = useState<ISet[]>([]);
@@ -60,9 +63,16 @@ export default function ModalSetResult({ isVisible, setIsVisible, players, chall
 
       const body = { winPlayer: winPlayer._id, result };
 
-      await api.put(`challenges/${challengeId}/set-result`, body);
+      console.log(body);
+
+      await api.post(`challenges/${challengeId}/set-result`, body);
+
+      setIsVisible(false);
+
+      setIsRefreshChallenges(true);
     } catch (error) {
-      Alert.alert('Erro ao setar resultado da partida');
+      console.log(error);
+      if (error instanceof Error) Alert.alert('Erro ao finalizar partida', error.message);
     }
   };
 

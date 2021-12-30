@@ -18,15 +18,12 @@ const DialogAcceptChallenge = async (challengeId: string) =>
           text: 'Sim',
           onPress: async () => {
             try {
-              console.log('accept challenge');
-
               await api.put(`challenges/${challengeId}`, {
                 dateTimeResponse: moment().toISOString(),
                 status: 'ACEITO',
               });
 
-              resolve(true);
-              return true;
+              return resolve(true);
             } catch (error) {
               if (error instanceof Error) Alert.alert('Erro ao aceitar desafio', error.message);
 
