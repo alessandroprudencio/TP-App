@@ -19,13 +19,6 @@ export default function HeaderUserComponent() {
           <Text>
             Olá, <Text style={styles.name}>{user.name}</Text>
           </Text>
-          <TouchableOpacity onPress={logout}>
-            <Text style={styles.logout}>
-              {' '}
-              <Icon size={18} name="logout" color={'black'} />
-              Sair
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.centerItem}>
@@ -39,19 +32,30 @@ export default function HeaderUserComponent() {
         </View>
 
         <View style={styles.rightItem}>
-          <TouchableOpacity
-            onPress={() => navigate('Category', { categoryId: user.category._id, categoryName: user.category.name })}
-          >
-            <Text style={styles.category}>{user.category?.name}</Text>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              onPress={() => navigate('Category', { categoryId: user.category._id, categoryName: user.category.name })}
+            >
+              <Text style={styles.category}>{user.category?.name}</Text>
+            </TouchableOpacity>
 
-          <Text style={styles.score}>{user.score || '0'} pontos</Text>
-
+            <Text style={styles.score}>{user.score || '0'} pontos</Text>
+          </View>
           {/* <Text style={styles.vd}>10-2 (V-D)</Text> */}
+
+          <TouchableOpacity onPress={logout}>
+            <Text style={styles.logout}>
+              {' '}
+              <Icon size={18} name="logout" color={'black'} />
+              Sair
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
-      <View style={styles.divider} />
+      <View style={{ marginBottom: 20 }} />
+
+      {/* <View style={styles.divider} /> */}
     </>
   );
 }
@@ -73,6 +77,7 @@ const styles = StyleSheet.create({
   },
   rightItem: {
     alignItems: 'flex-end',
+    justifyContent: 'space-between',
     width: '30%',
   },
   category: {
@@ -81,10 +86,11 @@ const styles = StyleSheet.create({
   },
   logout: {
     fontSize: 16,
-    marginTop: '100%',
+    // marginTop: '100%',
     fontWeight: 'bold',
   },
   score: {
+    textAlign: 'right',
     marginTop: 10,
   },
   vd: {

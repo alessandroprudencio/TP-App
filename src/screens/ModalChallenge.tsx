@@ -30,6 +30,13 @@ const messageHeight =
     ? { minHeight: height * 0.18, maxHeight: height * 0.18 }
     : { minHeight: height * 0.2, maxHeight: height * 0.2 };
 
+interface IError {
+  date: boolean;
+  time: boolean;
+  message: boolean;
+  opponent: boolean;
+}
+
 export default function ModalChallengeScreen({ visible, hideModal }: any) {
   const { colors } = useTheme();
 
@@ -45,6 +52,8 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
   const [loading, setLoading] = useState(false);
 
   const [opponentSelected, setOpponentSelected] = useState<string>();
+
+  const [hasError, setHasError] = useState<IError>({} as IError);
 
   const dateRef = createRef<TextInputMask>();
   const timeRef = createRef<TextInputMask>();
@@ -80,6 +89,16 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
 
   const submit = async () => {
     try {
+      if (!date || !time || !challenge.message! || !challenge.players) {
+        return setHasError((oldValue) => ({
+          ...oldValue,
+          date: !date,
+          time: !time,
+          message: !challenge.message,
+          opponent: !challenge.players,
+        }));
+      }
+
       setLoading(true);
 
       const requester = user._id;
@@ -117,6 +136,7 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                 outlineColor={colors.grey}
                 keyboardType="numeric"
                 label="Data"
+                error={hasError?.date}
                 returnKeyType="done"
                 mode="outlined"
                 style={styles.input}
@@ -128,6 +148,8 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                     options={{
                       mask: '99/99/9999',
                       validator: function (value, settings) {
+                        console.log(value);
+                        console.log(settings);
                         return true;
                       },
                     }}
@@ -146,6 +168,7 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                 keyboardType="numeric"
                 label="Horario"
                 returnKeyType="done"
+                error={hasError?.time}
                 mode="outlined"
                 style={styles.input}
                 render={(props) => (
@@ -167,7 +190,9 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
 
               {/* Select Player */}
               <View style={styles.section}>
-                <Text style={styles.label}>Selecione o adversário:</Text>
+                <Text style={[styles.label, { color: hasError?.opponent ? colors.error : colors.text }]}>
+                  Selecione o adversário:
+                </Text>
 
                 {opponents.length > 0 ? (
                   <FlatList
@@ -186,7 +211,13 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                     keyExtractor={(item) => item._id}
                     renderItem={({ item }) => (
                       <View style={{ alignItems: 'center', flex: 1 }}>
-                        <TouchableOpacity onPress={() => selectPlayer(item._id)}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            selectPlayer(item._id);
+
+                            setHasError((oldValue) => ({ ...oldValue, opponent: false }));
+                          }}
+                        >
                           <Avatar.Image
                             style={[
                               styles.avatar,
@@ -222,6 +253,7 @@ export default function ModalChallengeScreen({ visible, hideModal }: any) {
                   multiline={true}
                   underlineColorAndroid="transparent"
                   editable
+                  error={hasError?.message}
                   mode="flat"
                   style={messageHeight}
                   numberOfLines={12}

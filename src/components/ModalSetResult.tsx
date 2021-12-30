@@ -3,11 +3,13 @@ import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, Modal, Portal, RadioButton, Text, TextInput, Title } from 'react-native-paper';
 import { IPlayer } from '../interfaces/player.interface';
+import api from '../services/api';
 
 interface IModalSetResult {
   isVisible: boolean;
   setIsVisible: (value: boolean) => void;
   players: IPlayer[];
+  challengeId: string;
 }
 
 interface ISet {
@@ -26,7 +28,7 @@ interface IError {
   sets: Array<IErroSet>;
 }
 
-export default function ModalSetResult({ isVisible, setIsVisible, players }: IModalSetResult) {
+export default function ModalSetResult({ isVisible, setIsVisible, players, challengeId }: IModalSetResult) {
   const [hasError, setHasError] = useState<IError>({
     winPlayer: false,
     sets: [],
@@ -64,7 +66,7 @@ export default function ModalSetResult({ isVisible, setIsVisible, players }: IMo
 
       console.log(body);
 
-      // await api.put(`challenges/${_id}/set-result`, body);
+      await api.put(`challenges/${challengeId}/set-result`, body);
     } catch (error) {
       Alert.alert('Erro ao setar resultado da partida');
     }
@@ -201,7 +203,6 @@ export default function ModalSetResult({ isVisible, setIsVisible, players }: IMo
       <Modal
         visible={isVisible}
         dismissable={false}
-        // onDismiss={() => setIsVisible(false)}
         contentContainerStyle={[styles.containerStyle, { borderRadius: 5 }]}
       >
         <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>

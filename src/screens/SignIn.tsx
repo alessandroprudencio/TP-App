@@ -139,7 +139,7 @@ export default function SignInScreen() {
       </View>
 
       <TouchableOpacity
-        disabled={isError.email || isError.password}
+        disabled={isError.email || isError.password || loading}
         onPress={() => signIn()}
         style={[styles.loginBtn, { backgroundColor: colors.primary, borderRadius: roundness }]}
       >

@@ -18,7 +18,7 @@ export default function ButtonFinallyChallenge({ dateTimeResponse, _id, players 
 
       {dateTimeResponse && <Caption style={{ textAlign: 'center' }}>Aceito em: {formattedDate}</Caption>}
 
-      <ModalSetResult isVisible={isVisible} setIsVisible={() => setIsVisible} players={players} />
+      <ModalSetResult isVisible={isVisible} setIsVisible={setIsVisible} players={players} challengeId={_id} />
     </View>
   );
 }
